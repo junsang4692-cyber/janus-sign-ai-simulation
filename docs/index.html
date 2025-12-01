@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>Janus Sign AI Simulation</title>
+  <style>
+    body { font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif; max-width: 900px; margin: 40px auto; line-height: 1.6; }
+    h1, h2 { color: #163a5f; }
+    code { background: #f4f4f4; padding: 2px 4px; border-radius: 4px; }
+    .img-row { display: flex; gap: 16px; flex-wrap: wrap; }
+    .img-row img { max-width: 48%; border: 1px solid #ddd; border-radius: 8px; }
+    .note { padding: 10px 14px; background: #f9fbff; border-left: 4px solid #163a5f; margin: 16px 0; }
+  </style>
+</head>
+<body>
+  <h1>야누스 표지판 AI 시뮬레이션</h1>
+  <p>
+    이 프로젝트는 3×3 NIR 패턴을 가지는 야누스 구조 표지판을 가정하고,<br>
+    합성된 라이다 intensity 이미지를 이용해 CNN이 표지판 ID를 인식하는 과정을 시뮬레이션합니다.
+  </p>
+
+  <h2>1. 표지판 인식 원리</h2>
+  <ul>
+    <li>표지판 내부를 3×3 셀로 분할하고, 각 셀을 고반사(1) / 저반사(0)로 코딩합니다.</li>
+    <li>야누스 D/M/D 구조를 통해 가시광에서는 일반 표지판처럼 보이지만, 근적외선(NIR)에서는 3×3 패턴이 강한 대비로 나타납니다.</li>
+    <li>라이다 센서는 이 NIR intensity map을 촬영하고, CNN 분류기가 해당 패턴 ID를 인식합니다.</li>
+  </ul>
+
+  <h2>2. AI 시뮬레이션 구성</h2>
+  <ol>
+    <li>3×3 비트 패턴 → 32×32 흑백 이미지로 변환 (합성 라이다 맵)</li>
+    <li>여러 패턴에 대해 합성 데이터를 생성하고, TensorFlow/Keras 기반 CNN으로 학습</li>
+    <li>눈/오염을 가정해 셀 내부 픽셀을 일부 0으로 만들어 부분 가려짐을 시뮬레이션</li>
+    <li>각 셀에 대해
+      <ul>
+        <li>가려진 면적 비율(coverage)</li>
+        <li>셀 평균 intensity (0~1)</li>
+        <li>threshold 기반 디지털 인식 결과(1/0)</li>
+      </ul>
+      를 통계적으로 수집합니다.
+    </li>
+  </ol>
+
+  <h2>3. 가려진 면적과 인식 성능</h2>
+  <p>
+    합성 데이터에 대한 통계 분석 결과, 고반사 셀(논리값 1)에 대해
+    <strong>가려진 면적이 평균 xx% 이하</strong>이고,
+    <strong>셀 평균 intensity가 0.yy 이상</strong>이면
+    약 zz% 이상의 확률로 ‘1’로 안정적으로 인식되는 것을 확인했습니다.
+  </p>
+  <div class="note">
+    위의 xx, yy, zz 값은 Colab에서 시뮬레이션을 실행한 실제 결과로 교체해서 작성하면 됩니다.
+  </div>
+
+  <h2>4. 코드 및 노트북</h2>
+  <p>
+    전체 시뮬레이션 코드는 다음 Jupyter/Colab 노트북에 정리되어 있습니다.<br>
+    <a href="https://github.com/junsang4692-cyber/janus-sign-ai-simulation/blob/main/janus_sign_simulation.ipynb" target="_blank">
+      📓 시뮬레이션 노트북 바로가기
+    </a>
+  </p>
+
+  <p style="margin-top:40px; font-size:0.9em; color:#555;">
+    &copy; 2025. Janus Sign AI Simulation.
+  </p>
+</body>
+</html>
